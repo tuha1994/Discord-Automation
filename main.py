@@ -1,6 +1,3 @@
-#  https://discord.com/api/v9/channels/1154662799390285875/messages
-# 'C:\\Users\\tuha\\Desktop\\Chat Discord.xlsx'
-# url = 'https://discord.com/api/v9/channels/1154662799390285875/messages'
 
 import time
 import requests
