@@ -5,6 +5,7 @@ import requests
 import openpyxl
 import asyncio
 import random
+import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -22,7 +23,7 @@ url1 = CHANNEL_CHAT
 headers = {
     "Authorization": TOKEN_DISCORD
 }
-
+plt.rcParams['font.family'] = 'Arial'
 chromium_binary_path = 'C:\\Program Files\\Chromium\\Application\\chrome.exe'
 chromium_driver_path = './chromedriver/chromedriver.exe'
 service = Service(executable_path=chromium_driver_path)
@@ -68,5 +69,6 @@ async def main():
         await send_message(content)
     wb.close()
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())
 
