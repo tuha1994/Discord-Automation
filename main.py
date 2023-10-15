@@ -1,4 +1,5 @@
-# Discord 
+#discord
+
 import time
 import requests
 import openpyxl
@@ -47,6 +48,17 @@ async def send_message(content):
     }
     res = requests.post(url, payload, headers=headers)
     print(f'Tin nhắn đã được gửi: {content}')
+    
+    # Thêm đoạn mã dưới đây để xóa tin nhắn sau khi gửi
+    if res.status_code == 200:
+        message_id = res.json().get('id')
+        if message_id:
+            delete_url = f"{url}/{message_id}"
+            delete_response = requests.delete(delete_url, headers=headers)
+            if delete_response.status_code == 204:
+                print(f'Tin nhắn đã được xóa: {content}')
+            else:
+                print(f'Không thể xóa tin nhắn: {content}')
 
 async def main():
     wb = openpyxl.load_workbook('./Chat Discord.xlsx')
@@ -54,21 +66,7 @@ async def main():
     for row in sheet.iter_rows(values_only=True):
         content = row[0]
         await send_message(content)
-        elements = WebDriverWait(driver, 30).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.messageListItem-ZZ7v6g')))
-        for element in elements:
-            try:
-                last_message_element = element.find_element(By.XPATH, '//ol[@data-list-id="chat-messages"]/li[last()]//div[contains(@class,"messageContent")]')
-            except:
-                pass
-            if last_message_element:
-                action = ActionChains(driver)
-                action.context_click(last_message_element).perform()
-        delete_element = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.ID, 'message-delete'))
-        )
-        actions = ActionChains(driver)
-        actions.click(delete_element).perform()
-        driver.switch_to.active_element.send_keys(Keys.RETURN)
     wb.close()
 
 asyncio.run(main())
+
