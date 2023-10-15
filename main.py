@@ -17,6 +17,8 @@ from selenium.webdriver.common.keys import Keys
 from channel import CHANNEL_DISCORD ,CHANNEL_CHAT
 from token_discord import TOKEN_DISCORD
 from timer import time_start,time_stop
+import datetime
+
 
 url = CHANNEL_DISCORD
 url1 = CHANNEL_CHAT
@@ -42,13 +44,20 @@ async def random_delay():
     delay_time = random.uniform(time_start, time_stop)
     await asyncio.sleep(delay_time)
 
+# Hàm gửi tin nhắn
 async def send_message(content):
     await random_delay()
+
+    # Lấy thời gian hiện tại và định dạng nó thành chuỗi
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    content_with_time = f"{current_time}: {content}"
+
     payload = {
         "content": content
     }
-    res = requests.post(url, payload, headers=headers)
-    print(f'Tin nhắn đã được gửi: {content}')
+    res = requests.post(url, json=payload, headers=headers)
+    with open('log.txt', 'a',encoding='utf-8') as file:
+        file.write(f'Tin nhắn đã gửi lúc {current_time},nội dung là :{content}\n')
     
     # Thêm đoạn mã dưới đây để xóa tin nhắn sau khi gửi
     if res.status_code == 200:
@@ -57,9 +66,9 @@ async def send_message(content):
             delete_url = f"{url}/{message_id}"
             delete_response = requests.delete(delete_url, headers=headers)
             if delete_response.status_code == 204:
-                print(f'Tin nhắn đã được xóa: {content}')
+                print(f'Tin nhắn đã được xóa: {current_time},nội dung là :{content}')
             else:
-                print(f'Không thể xóa tin nhắn: {content}')
+                print(f'Không thể xóa tin nhắn: {current_time},nội dung là :{content}')
 
 async def main():
     wb = openpyxl.load_workbook('./Chat Discord.xlsx')
@@ -71,4 +80,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
